@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>챗ODT - 공모전 최종</title>
+    <style>
+        /* --- Global Styles, Variables & Animations --- */
+        :root {
+            --bg-color-1: #0f0c29;
+            --bg-color-2: #302b63;
+            --bg-color-3: #24243e;
+            --text-color: #f0f0f0;
+            --accent-neon: #00ffea; /* Cyan Glow */
+            --accent-warm: #ff477e; /* Pink Accent */
+            --hexagon-bg: rgba(90, 65, 135, 0.7);
+        }
+
+        /* Animated Background for "Fancy" look */
+        @keyframes gradientBackground {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Malgun Gothic', sans-serif;
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background: linear-gradient(-45deg, var(--bg-color-1), var(--bg-color-2), var(--bg-color-3), var(--bg-color-1));
+            background-size: 400% 400%;
+            animation: gradientBackground 20s ease infinite;
+        }
+
+        /* --- Main Layout (2-Column Grid) --- */
+        .container {
+            display: grid;
+            grid-template-columns: 55% 45%; /* Adjusted ratio for better balance */
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* --- Left Panel: Slideshow (Ken Burns Effect) --- */
+        .slideshow-container {
+            position: relative;
+            overflow: hidden;
+            background-color: #000;
+            box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            /* Fade transition */
+            transition: opacity 1.5s ease-in-out;
+        }
+
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* Setup for Ken Burns effect */
+            transform: scale(1);
+            /* Zoom transition (Duration 7s) */
+            transition: transform 7s linear;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        /* Apply Ken Burns effect when active */
+        .slide.active img {
+            transform: scale(1.15);
+        }
+
+        /* Cinematic Overlay */
+        .slideshow-container::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to right, rgba(15, 12, 41, 0.6), rgba(15, 12, 41, 0.1));
+        }
+
+        /* --- Right Panel: Link Hub (Hexagon Layout) --- */
+        .link-hub-container {
+            padding: 50px 30px;
+            overflow-y: auto;
+            /* Glassmorphism effect */
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            position: relative; /* For logo positioning */
+        }
+
+        .header-logo {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            width: 84px; /* 로고 크기 조절 */
+            height: auto;
+            opacity: 0.8; /* 약간 투명하게 */
+        }
+
+        .link-section-wrapper {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 50px;
+            color: var(--accent-neon);
+            /* Intense Neon text effect */
+            text-shadow: 0 0 5px var(--accent-neon), 0 0 15px var(--accent-neon), 0 0 30px rgba(0, 255, 234, 0.5);
+            letter-spacing: 2px;
+        }
+
+        .link-section {
+            margin-bottom: 60px;
+        }
+
+        .link-section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 40px; /* Increased margin for hexagon spacing */
+            text-align: center;
+            color: var(--accent-warm);
+            text-shadow: 0 0 10px rgba(255, 71, 126, 0.5);
+            text-transform: uppercase;
+        }
+
+        /* --- Link Grid (Hexagon Honeycomb Structure) --- */
+        .link-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px 166px; /* 내부 좌우 간격만 주로 사용 */
+            margin-bottom: 80px; /* 이 값을 조절하여 줄 사이의 상하 간격을 변경하세요 */
+        }
+
+        /* 마지막 줄에는 하단 여백이 필요 없으므로 제거합니다 */
+        .link-grid:last-child {
+            margin-bottom: 0;
+        }
+
+        /* --- Custom Layouts for Link Sections --- */
+        .circular-layout {
+            position: relative;
+            width: 400px; /* Adjust size of circle container */
+            height: 400px; /* Adjust size of circle container */
+            margin: 60px auto;
+            padding: 0;
+            display: block;
+        }
+
+        .circular-layout .link-item {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin: -70px; /* Half of link-item width */
+        }
+
+        /* Position each of the 6 items on the circle */
+        .circular-layout .link-item:nth-of-type(1) { transform: rotate(0deg) translate(200px) rotate(0deg); }
+        .circular-layout .link-item:nth-of-type(2) { transform: rotate(60deg) translate(200px) rotate(-60deg); }
+        .circular-layout .link-item:nth-of-type(3) { transform: rotate(120deg) translate(200px) rotate(-120deg); }
+        .circular-layout .link-item:nth-of-type(4) { transform: rotate(180deg) translate(200px) rotate(-180deg); }
+        .circular-layout .link-item:nth-of-type(5) { transform: rotate(240deg) translate(200px) rotate(-240deg); }
+        .circular-layout .link-item:nth-of-type(6) { transform: rotate(300deg) translate(200px) rotate(-300deg); }
+
+        .circular-layout .center-logo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 150px; /* Adjust size as needed */
+            height: 150px; /* Adjust size as needed */
+        }
+        .circular-layout .center-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+
+
+        .grid-2x2-layout {
+            display: grid;
+            grid-template-columns: repeat(2, 140px);
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .link-item {
+            display: block;
+            text-decoration: none;
+            color: var(--text-color);
+            width: 140px;
+            text-align: center;
+            /* Bouncy scaling transition for hover */
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .link-item:hover {
+            transform: scale(1.1);
+            z-index: 10;
+        }
+
+        /* Icon Styling */
+        .link-icon-bg {
+            --icon-size: 110px;
+            width: var(--icon-size);
+            height: var(--icon-size);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 15px auto;
+        }
+
+        .link-item:hover .link-icon-bg img {
+            box-shadow: 0 0 10px var(--accent-warm), 0 0 25px var(--accent-warm), 0 0 50px rgba(255, 71, 126, 0.7);
+        }
+
+        .link-icon-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 50%;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+            transition: box-shadow 0.3s ease;
+            transform: scale(1.2);
+        }
+
+        /* Class to fill the circle for non-square images */
+        .fill-image .link-icon-bg img {
+            object-fit: cover;
+        }
+
+        .link-item span {
+            font-size: 1rem;
+            font-weight: 600;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
+
+        /* Custom Scrollbar */
+        .link-hub-container::-webkit-scrollbar { width: 8px; }
+        .link-hub-container::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); }
+        .link-hub-container::-webkit-scrollbar-thumb { background: var(--accent-warm); border-radius: 4px; }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 1200px) {
+            .container {
+                grid-template-columns: 50% 50%;
+            }
+            .link-icon-bg {
+                --hex-size: 100px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .container {
+                grid-template-columns: 1fr;
+                grid-template-rows: 40vh auto;
+                height: auto;
+            }
+            body {
+                overflow-y: auto;
+            }
+            .slideshow-container {
+                height: 40vh;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            }
+            .link-hub-container {
+                padding: 40px 20px;
+                min-height: 60vh;
+                border-left: none;
+            }
+        }
+
+        /* --- 아이콘 재배치 (스크롤 방지) --- */
+        @media (max-width: 992px) and (min-width: 601px) {
+            .link-hub-container {
+                padding: 20px; /* 전체적인 여백 감소 */
+                display: flex;
+                flex-direction: column;
+                justify-content: center; /* 중앙 정렬 */
+            }
+            .header h1 {
+                margin-bottom: 30px; /* 헤더와 아이콘 간격 감소 */
+            }
+            .link-section-wrapper {
+                flex-grow: 0; /* wrapper가 불필요하게 공간을 차지하지 않도록 함 */
+            }
+            .link-section {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px 25px; /* 아이콘 간격 조절 */
+                margin-bottom: 0;
+            }
+            .link-grid {
+                display: contents; /* 자식 요소들을 부모 flex 컨테이너에 직접 포함시킴 */
+            }
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 2rem;
+                margin-bottom: 20px;
+            }
+            .link-hub-container {
+                padding-top: 20px;
+                padding-bottom: 20px;
+            }
+            .link-section {
+                margin-bottom: 0;
+            }
+            .link-grid {
+                gap: 10px;
+                margin-bottom: 0;
+            }
+             .link-item {
+                width: 100px;
+            }
+            .link-icon-bg {
+                --icon-size: 80px;
+                margin-bottom: 10px;
+            }
+            .link-item span {
+                font-size: 0.9rem;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="slideshow-container">
+            <div class="slide active">
+                <img src="images/선택1.jpg" alt="시설 이미지 1">
+            </div>
+            <div class="slide">
+                <img src="images/선택2.jpg" alt="시설 이미지 2">
+            </div>
+            <div class="slide">
+                <img src="images/선택3.jpg" alt="시설 이미지 3">
+            </div>
+            <div class="slide">
+                <img src="images/선택4.jpg" alt="시설 이미지 4">
+            </div>
+            <div class="slide">
+                <img src="images/선택5.jpg" alt="시설 이미지 5">
+            </div>
+            <div class="slide">
+                <img src="images/선택6.jpg" alt="시설 이미지 6">
+            </div>
+        </div>
+
+        <div class="link-hub-container">
+            <img src="images/k-eco.png" alt="K-eco 로고" class="header-logo">
+            <header class="header">
+                <h1>챗ODT</h1>
+            </header>
+
+            <div class="link-section-wrapper">
+                <section class="link-section">
+                    <div class="link-grid">
+                        <a href="https://notebooklm.google.com/notebook/f84db5f1-d8fc-4b8b-883b-e04c5f28592e" target="_blank" class="link-item">
+                            <div class="link-icon-bg">
+                                <img src="images/개선방안.png" alt="개선방안 아이콘">
+                            </div>
+                            <span>개선방안</span>
+                        </a>
+                        <a href="https://chatgpt.com/g/g-6847ba5df0b48191b8da5588499b2d4b-gaeseonbiyong-doumi" target="_blank" class="link-item">
+                            <div class="link-icon-bg">
+                                <img src="images/개선비용.png" alt="개선비용 아이콘">
+                            </div>
+                            <span>개선비용</span>
+                        </a>
+                    </div>
+                    <div class="link-grid">
+                        <a href="https://chatgpt.com/g/g-68368a707ccc8191b0607dc0a0d16c5b-agcwi-giyeodo-geuraepeu-jagseong" target="_blank" class="link-item">
+                            <div class="link-icon-bg">
+                                <img src="images/그래프.png" alt="그래프 아이콘">
+                            </div>
+                            <span>그래프</span>
+                        </a>
+                        <a href="https://gemini.google.com/gem/1hwlXPz0N7tB2dzKrJhj8bgIM_JFDCWzQ?usp=sharing" target="_blank" class="link-item">
+                            <div class="link-icon-bg">
+                                <img src="images/이미지.png" alt="이미지 생성 아이콘">
+                            </div>
+                            <span>이미지</span>
+                        </a>
+                        <a href="https://notebooklm.google.com/notebook/6a9d43dc-9127-4ede-9cce-a14417d4a699" target="_blank" class="link-item">
+                            <div class="link-icon-bg">
+                                <img src="images/문구검증.png" alt="문구검증 아이콘">
+                            </div>
+                            <span>문구검증</span>
+                        </a>
+                    </div>
+                    <div class="link-grid">
+                        <a href="https://chatgpt.com/g/g-6836979391c4819194dd7240fc953d85-jiyeogbyeol-agcwiyeceug" target="_blank" class="link-item">
+                                <div class="link-icon-bg">
+                                    <img src="images/악취예측.png" alt="악취예측 아이콘">
+                                </div>
+                                <span>악취예측</span>
+                        </a>
+                        <a href="https://chatgpt.com/g/g-6899699d57d881918c08f7dbcf756857-agcwigisuljindan-unyeongpyeongga-baejeom-sancul" target="_blank" class="link-item fill-image">
+                            <div class="link-icon-bg">
+                                <img src="images/운영평가.png" alt="운영평가 아이콘">
+                            </div>
+                            <span>운영평가</span>
+                        </a>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced Automatic Slideshow Logic (Ken Burns Integration)
+        function startSlideshow() {
+            const slides = document.querySelectorAll('.slide');
+            let currentSlide = 0;
+            // 슬라이드 전환 시간 (CSS의 transform 지속 시간 7s에 맞춰 조정)
+            const SLIDE_DURATION = 6000; // 6 seconds
+
+            function nextSlide() {
+                // Hide current slide (Triggers fade out and zoom reset via CSS transition)
+                slides[currentSlide].classList.remove('active');
+                
+                // Calculate next slide index
+                currentSlide = (currentSlide + 1) % slides.length;
+                
+                // Show next slide (Triggers fade in and Ken Burns zoom via CSS transition)
+                slides[currentSlide].classList.add('active');
+            }
+
+            // Start the interval
+            if (slides.length > 1) {
+                setInterval(nextSlide, SLIDE_DURATION);
+            }
+        }
+
+        // Start the slideshow when the page loads
+        document.addEventListener('DOMContentLoaded', startSlideshow);
+    </script>
+
+</body>
+</html>
